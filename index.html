@@ -390,6 +390,7 @@
   const $ = id => document.getElementById(id);
   const NOME = "Thais";                 // troque aqui se quiser outro nome
   const PADRAO_SAIDA = '12:30', PADRAO_VOLTA = '13:00';
+  const ALMOCO_PADRAO = 30;             // minutos de almoço na previsão
 
   const jornadaEl = $('jornada'), entradaEl = $('entrada');
   const saidaAlmocoEl = $('saidaAlmoco'), voltaAlmocoEl = $('voltaAlmoco');
@@ -463,6 +464,12 @@
     const jornada = paraMin(jornadaEl.value);
     const entrada = paraMin(entradaEl.value);
     const saidaA = paraMin(saidaAlmocoEl.value) ?? paraMin(PADRAO_SAIDA);
+
+    // enquanto você não marcar a volta, ela acompanha a saída + 30 min
+    if(!marcouVolta){
+      const previsto = paraTexto(saidaA + ALMOCO_PADRAO);
+      if(voltaAlmocoEl.value !== previsto) voltaAlmocoEl.value = previsto;
+    }
     const voltaA = paraMin(voltaAlmocoEl.value) ?? paraMin(PADRAO_VOLTA);
 
     tagSaida.textContent = marcouSaida ? 'marcado' : 'previsto';
