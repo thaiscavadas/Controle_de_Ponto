@@ -104,6 +104,27 @@
     padding:5px 10px;
     white-space:nowrap;
   }
+  .hero-right{display:flex; align-items:center; gap:8px;}
+  .bell{
+    width:36px; height:36px;
+    display:grid; place-items:center;
+    border:none;
+    border-radius:50%;
+    background:rgba(255,255,255,.18);
+    color:#fff;
+    cursor:pointer;
+    padding:0;
+    transition:transform .12s ease, background .12s ease;
+  }
+  .bell svg{width:18px; height:18px;}
+  .bell:active{transform:scale(.88);}
+  .bell.on{background:#fff; color:var(--indigo);}
+  .bell.ring{animation:swing .6s ease-in-out infinite;}
+  @keyframes swing{
+    0%,100%{transform:rotate(0);}
+    25%{transform:rotate(14deg);}
+    75%{transform:rotate(-14deg);}
+  }
   .hero-time{
     font-size:60px;
     font-weight:800;
@@ -168,6 +189,40 @@
   .ico.amber{background:#fef4e2; color:var(--amber);}
   .ico.green{background:#e3f8ef; color:var(--green);}
   .ico.pink{background:#fdeaf4; color:var(--pink);}
+  .ico.violet{background:#efe7fe; color:var(--violet);}
+
+  .add{
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    width:100%;
+    font-family:inherit; font-size:14.5px; font-weight:700;
+    color:var(--indigo);
+    background:#eef0ff;
+    border:none; border-radius:16px;
+    padding:13px;
+    margin-bottom:12px;
+    cursor:pointer;
+    transition:transform .12s ease, background .12s ease;
+  }
+  .add svg{width:17px; height:17px;}
+  .add:active{transform:scale(.98); background:#e0e3ff;}
+  .extra-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 2px 2px;
+  }
+  .extra-title{
+    font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .rm{
+    width:28px; height:28px;
+    display:grid; place-items:center;
+    border:none; border-radius:50%;
+    background:var(--field); color:var(--muted);
+    font-size:18px; line-height:1; cursor:pointer;
+    transition:transform .12s ease, background .12s ease;
+  }
+  .rm:active{transform:scale(.88); background:#e9edf5;}
+  [hidden]{display:none !important;}
 
   .txt{flex:1 1 auto; min-width:0;}
   .txt b{display:block; font-size:16px; font-weight:700; letter-spacing:-.01em;}
@@ -297,7 +352,14 @@
   <section class="hero" id="hero">
     <div class="hero-top">
       <span class="hero-label">Saída</span>
-      <span class="hero-chip" id="chip">previsão</span>
+      <span class="hero-right">
+        <span class="hero-chip" id="chip">previsão</span>
+        <button class="bell" type="button" id="bell" aria-pressed="false" aria-label="Avisar na hora de sair">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>
+          </svg>
+        </button>
+      </span>
     </div>
     <div class="hero-time" id="horaSaida">--:--</div>
     <div class="hero-sub" id="sub">Marque a sua entrada</div>
@@ -336,11 +398,11 @@
         </svg>
       </span>
       <span class="txt">
-        <b>Saiu pro almoço</b>
-        <small id="subSaida">previsto 12:30</small>
+        <b>Saída almoço</b>
+        <small id="subSaida"></small>
       </span>
       <span class="ctrl">
-        <span class="tag" id="tagSaida">previsto</span>
+        <span class="tag" id="tagSaida" hidden></span>
         <button class="now" type="button" data-fill="saidaAlmoco">agora</button>
         <input type="time" id="saidaAlmoco" value="12:30" class="is-preview" aria-label="Saída para o almoço">
       </span>
@@ -353,12 +415,56 @@
       </span>
       <span class="txt">
         <b>Voltou</b>
-        <small id="subVolta">previsto 13:00</small>
+        <small id="subVolta"></small>
       </span>
       <span class="ctrl">
-        <span class="tag" id="tagVolta">previsto</span>
+        <span class="tag" id="tagVolta" hidden></span>
         <button class="now" type="button" data-fill="voltaAlmoco">agora</button>
         <input type="time" id="voltaAlmoco" value="13:00" class="is-preview" aria-label="Volta do almoço">
+      </span>
+    </div>
+  </section>
+
+  <button class="add" type="button" id="addExtra">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14"/><path d="M5 12h14"/>
+    </svg>
+    Saída extra durante o dia
+  </button>
+
+  <section class="card" id="cardExtra" hidden>
+    <div class="extra-head">
+      <span class="extra-title">Saída extra</span>
+      <button class="rm" type="button" id="rmExtra" aria-label="Remover saída extra">×</button>
+    </div>
+    <div class="line">
+      <span class="ico violet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M14 17l5-5-5-5"/><path d="M19 12H9"/>
+        </svg>
+      </span>
+      <span class="txt">
+        <b>Saiu</b>
+        <small>durante o dia</small>
+      </span>
+      <span class="ctrl">
+        <button class="now" type="button" data-fill="saidaExtra">agora</button>
+        <input type="time" id="saidaExtra" aria-label="Saída extra">
+      </span>
+    </div>
+    <div class="line">
+      <span class="ico green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>
+        </svg>
+      </span>
+      <span class="txt">
+        <b>Voltou</b>
+        <small id="subExtra">marque quando voltar</small>
+      </span>
+      <span class="ctrl">
+        <button class="now" type="button" data-fill="voltaExtra">agora</button>
+        <input type="time" id="voltaExtra" aria-label="Volta da saída extra">
       </span>
     </div>
   </section>
@@ -388,7 +494,6 @@
 <script>
 (function(){
   const $ = id => document.getElementById(id);
-  const NOME = "Thais";                 // troque aqui se quiser outro nome
   const PADRAO_SAIDA = '12:30', PADRAO_VOLTA = '13:00';
   const ALMOCO_PADRAO = 30;             // minutos de almoço na previsão
 
@@ -399,12 +504,16 @@
   const horaSaida = $('horaSaida'), hero = $('hero'), chip = $('chip'), sub = $('sub');
   const barra = $('barra'), feito = $('feito'), jornadaLegenda = $('jornadaLegenda');
   const alerta = $('alerta');
+  const saidaExtraEl = $('saidaExtra'), voltaExtraEl = $('voltaExtra');
+  const subExtra = $('subExtra'), cardExtra = $('cardExtra'), addExtra = $('addExtra');
 
   let marcouSaida = false, marcouVolta = false;
+  let extraAtivo = false;     // a saída extra está sendo usada hoje?
+  let saidaPrevista = null;   // minuto do dia em que você pode sair (ou null)
 
   const hojeISO = new Date().toISOString().slice(0,10);
   const h = new Date().getHours();
-  $('saudacao').textContent = (h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite') + ', ' + NOME;
+  $('saudacao').textContent = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
   $('hoje').textContent = new Date()
     .toLocaleDateString('pt-BR', {weekday:'short', day:'2-digit', month:'short'})
     .replace(/\./g,'');
@@ -415,7 +524,8 @@
       localStorage.setItem('ponto', JSON.stringify({
         dia:hojeISO, jornada:jornadaEl.value, entrada:entradaEl.value,
         saidaAlmoco:saidaAlmocoEl.value, voltaAlmoco:voltaAlmocoEl.value,
-        marcouSaida, marcouVolta
+        marcouSaida, marcouVolta,
+        extraAtivo, saidaExtra:saidaExtraEl.value, voltaExtra:voltaExtraEl.value
       }));
     }catch(e){}
   }
@@ -430,6 +540,14 @@
     if(d.voltaAlmoco) voltaAlmocoEl.value = d.voltaAlmoco;
     marcouSaida = !!d.marcouSaida;
     marcouVolta = !!d.marcouVolta;
+    extraAtivo = !!d.extraAtivo;
+    if(d.saidaExtra) saidaExtraEl.value = d.saidaExtra;
+    if(d.voltaExtra) voltaExtraEl.value = d.voltaExtra;
+    refletirExtra();
+  }
+  function refletirExtra(){
+    cardExtra.hidden = !extraAtivo;
+    addExtra.hidden = extraAtivo;
   }
 
   /* ---------- horas ---------- */
@@ -472,12 +590,14 @@
     }
     const voltaA = paraMin(voltaAlmocoEl.value) ?? paraMin(PADRAO_VOLTA);
 
-    tagSaida.textContent = marcouSaida ? 'marcado' : 'previsto';
-    tagVolta.textContent = marcouVolta ? 'marcado' : 'previsto';
+    tagSaida.textContent = marcouSaida ? 'marcado' : '';
+    tagVolta.textContent = marcouVolta ? 'marcado' : '';
+    tagSaida.hidden = !marcouSaida;
+    tagVolta.hidden = !marcouVolta;
     tagSaida.classList.toggle('is-marked', marcouSaida);
     tagVolta.classList.toggle('is-marked', marcouVolta);
-    subSaida.textContent = marcouSaida ? 'marcado por você' : 'previsto ' + saidaAlmocoEl.value;
-    subVolta.textContent = marcouVolta ? 'marcado por você' : 'previsto ' + voltaAlmocoEl.value;
+    subSaida.textContent = marcouSaida ? 'marcado por você' : '';
+    subVolta.textContent = marcouVolta ? 'marcado por você' : '';
     subSaida.classList.toggle('ok', marcouSaida);
     subVolta.classList.toggle('ok', marcouVolta);
     saidaAlmocoEl.classList.toggle('is-preview', !marcouSaida);
@@ -487,6 +607,7 @@
       horaSaida.textContent = '--:--';
       sub.textContent = 'Jornada inválida';
       aviso('Escreva a jornada assim: 08:17.');
+      saidaPrevista = null;
       return;
     }
     jornadaLegenda.textContent = duracao(jornada);
@@ -494,6 +615,20 @@
     let intervalo = voltaA - saidaA, msg = '';
     if(intervalo < 0){ intervalo = 0; msg = 'A volta do almoço está antes da saída.'; }
     subJornada.textContent = 'almoço de ' + duracao(intervalo);
+
+    // saída extra no meio do dia
+    let intervaloExtra = 0, seExtra = null, veExtra = null;
+    if(extraAtivo){
+      seExtra = paraMin(saidaExtraEl.value);
+      veExtra = paraMin(voltaExtraEl.value);
+      if(seExtra != null && veExtra != null){
+        intervaloExtra = veExtra - seExtra;
+        if(intervaloExtra < 0){ intervaloExtra = 0; if(!msg) msg = 'A volta extra está antes da saída.'; }
+        subExtra.textContent = intervaloExtra ? 'fora por ' + duracao(intervaloExtra) : 'de volta';
+      } else {
+        subExtra.textContent = seExtra != null ? 'marque quando voltar' : 'durante o dia';
+      }
+    }
 
     if(entrada === null){
       horaSaida.textContent = '--:--';
@@ -503,12 +638,14 @@
       feito.textContent = '0% da jornada';
       hero.classList.remove('is-done');
       aviso(msg);
+      saidaPrevista = null;
       return;
     }
     if(!msg && saidaA < entrada) msg = 'O almoço está marcado antes da entrada.';
     aviso(msg);
 
-    const saida = entrada + jornada + intervalo;
+    const saida = entrada + jornada + intervalo + intervaloExtra;
+    saidaPrevista = saida;
     horaSaida.textContent = paraTexto(saida);
     chip.textContent = (marcouSaida && marcouVolta) ? 'confirmado' : 'previsão';
 
@@ -516,7 +653,12 @@
     const agora = new Date();
     const min = agora.getHours()*60 + agora.getMinutes();
     const almocoJaTirado = Math.max(0, Math.min(min, voltaA) - saidaA);
-    const trabalhado = Math.max(0, Math.min(min - entrada - Math.min(almocoJaTirado, intervalo), jornada));
+    let extraJaTirado = 0;
+    if(seExtra != null){
+      const fimExtra = (veExtra != null) ? veExtra : min;
+      extraJaTirado = Math.max(0, Math.min(min, fimExtra) - seExtra);
+    }
+    const trabalhado = Math.max(0, Math.min(min - entrada - Math.min(almocoJaTirado, intervalo) - extraJaTirado, jornada));
     const pct = Math.round((trabalhado / jornada) * 100);
     barra.style.width = Math.max(0, Math.min(100, pct)) + '%';
     feito.textContent = pct + '% da jornada';
@@ -535,6 +677,22 @@
   }
 
   function atualizar(){ calcular(); salvar(); }
+
+  /* ---------- saída extra ---------- */
+  addExtra.addEventListener('click', () => {
+    extraAtivo = true;
+    refletirExtra();
+    atualizar();
+    saidaExtraEl.focus();
+  });
+  $('rmExtra').addEventListener('click', () => {
+    extraAtivo = false;
+    saidaExtraEl.value = '';
+    voltaExtraEl.value = '';
+    refletirExtra();
+    atualizar();
+  });
+  [saidaExtraEl, voltaExtraEl].forEach(el => el.addEventListener('input', atualizar));
 
   /* ---------- interações ---------- */
   jornadaEl.addEventListener('blur', () => {
@@ -570,14 +728,107 @@
     entradaEl.value = '';
     saidaAlmocoEl.value = PADRAO_SAIDA;
     voltaAlmocoEl.value = PADRAO_VOLTA;
+    extraAtivo = false;
+    saidaExtraEl.value = '';
+    voltaExtraEl.value = '';
+    refletirExtra();
     atualizar();
   });
 
-  document.addEventListener('visibilitychange', () => { if(!document.hidden) calcular(); });
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) { calcular(); checarAlarme(); } });
+
+  /* ---------- alarme da saída ---------- */
+  const bell = $('bell');
+  let alarmeLigado = false;   // o sininho está ativado?
+  let jaTocou = null;         // minuto de saída que já disparou (pra não repetir)
+  let tocando = false;        // está tocando agora?
+  let audioCtx = null;
+  let pararEm = 0;            // timestamp pra parar o som sozinho
+
+  try{ alarmeLigado = localStorage.getItem('ponto_alarme') === '1'; }catch(e){}
+  refletirBell();
+
+  function refletirBell(){
+    bell.classList.toggle('on', alarmeLigado);
+    bell.setAttribute('aria-pressed', alarmeLigado ? 'true' : 'false');
+    if(!alarmeLigado) bell.classList.remove('ring');
+  }
+
+  bell.addEventListener('click', () => {
+    if(tocando){ pararSom(); return; }      // tocando → clicar silencia
+    alarmeLigado = !alarmeLigado;
+    try{ localStorage.setItem('ponto_alarme', alarmeLigado ? '1' : '0'); }catch(e){}
+    refletirBell();
+    if(alarmeLigado){
+      // o toque libera o som e pede permissão de notificação
+      try{
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+      }catch(e){}
+      if('Notification' in window && Notification.permission === 'default'){
+        try{ Notification.requestPermission(); }catch(e){}
+      }
+      beep(0.06, 660, 0.12);                 // bip curtinho de confirmação
+      // se já passou da hora quando você liga, avisa na hora
+      checarAlarme();
+    }
+  });
+
+  function beep(vol, freq, dur){
+    if(!audioCtx) return;
+    try{
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.value = vol;
+      o.connect(g); g.connect(audioCtx.destination);
+      const t = audioCtx.currentTime;
+      o.start(t); o.stop(t + dur);
+    }catch(e){}
+  }
+
+  function tocarAlarme(){
+    if(tocando) return;
+    tocando = true;
+    pararEm = Date.now() + 40000;            // para sozinho depois de 40s
+    bell.classList.add('ring');
+    if(navigator.vibrate){ try{ navigator.vibrate([400,200,400,200,400]); }catch(e){} }
+    if('Notification' in window && Notification.permission === 'granted'){
+      try{ new Notification('Hora de bater o ponto', { body:'Sua jornada chegou ao fim.' }); }catch(e){}
+    }
+    soarLoop();
+  }
+  function soarLoop(){
+    if(!tocando) return;
+    if(Date.now() > pararEm){ pararSom(); return; }
+    beep(0.10, 880, 0.18);
+    setTimeout(() => beep(0.10, 660, 0.18), 220);
+    setTimeout(soarLoop, 1300);
+  }
+  function pararSom(){
+    tocando = false;
+    bell.classList.remove('ring');
+    if(navigator.vibrate){ try{ navigator.vibrate(0); }catch(e){} }
+  }
+
+  function checarAlarme(){
+    if(!alarmeLigado || saidaPrevista == null){ return; }
+    const d = new Date();
+    const agora = d.getHours()*60 + d.getMinutes();
+    // dispara ao chegar na hora (com uma folga de 2min caso a aba estivesse dormindo)
+    if(agora >= saidaPrevista && agora <= saidaPrevista + 2){
+      if(jaTocou !== saidaPrevista){
+        jaTocou = saidaPrevista;
+        tocarAlarme();
+      }
+    } else if(agora < saidaPrevista){
+      jaTocou = null;                        // mudou o horário pra frente: arma de novo
+    }
+  }
 
   restaurar();
   calcular();
-  setInterval(calcular, 30000);
+  checarAlarme();
+  setInterval(() => { calcular(); checarAlarme(); }, 15000);
 })();
 </script>
 </body>
